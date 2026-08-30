@@ -1,0 +1,2515 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Ape Langa - අපේ ළඟ</title>
+<link
+rel="stylesheet"
+href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
+
+<script
+src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+</script>
+
+<style>
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    font-family:Arial,"Noto Sans Sinhala",sans-serif;
+}
+
+body{
+    background:#f4f7fb;
+    color:#172033;
+    padding-bottom:80px;
+}
+
+header{
+    height:70px;
+    background:white;
+    display:flex;
+    align-items:center;
+    padding:0 5%;
+    border-bottom:1px solid #ddd;
+}
+
+.logo{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.logo-icon{
+    font-size:30px;
+}
+
+.logo h2{
+    color:#173b72;
+}
+
+.logo small{
+    color:#777;
+}
+
+.location{
+    margin-left:auto;
+    background:#eef3f8;
+    padding:10px 15px;
+    border-radius:20px;
+    font-size:13px;
+}
+
+main{
+    max-width:1100px;
+    margin:auto;
+    padding:25px 15px;
+}
+
+.hero{
+    background:linear-gradient(135deg,#173b72,#2871ad);
+    color:white;
+    border-radius:25px;
+    padding:35px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.hero h1{
+    font-size:35px;
+    line-height:1.3;
+}
+
+.hero span{
+    color:#bde9ff;
+}
+
+.hero p{
+    margin-top:10px;
+}
+
+.hero-icon{
+    font-size:80px;
+}
+
+.search{
+    margin:20px 0;
+    background:white;
+    border:1px solid #ddd;
+    border-radius:15px;
+    padding:15px;
+    display:flex;
+    gap:10px;
+}
+
+.search input{
+    width:100%;
+    border:none;
+    outline:none;
+    font-size:16px;
+}
+
+.emergency{
+    background:#fff0ed;
+    border:1px solid #ffd0ca;
+    border-radius:20px;
+    padding:25px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:20px;
+}
+
+.emergency h2{
+    margin:7px 0;
+}
+
+.emergency p{
+    color:#666;
+}
+
+.red-button{
+    background:#d9362e;
+    color:white;
+    border:none;
+    border-radius:12px;
+    padding:14px 20px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.title{
+    margin:30px 0 15px;
+}
+
+.services{
+    display:grid;
+    grid-template-columns:repeat(6,1fr);
+    gap:12px;
+}
+
+.service{
+    background:white;
+    border:1px solid #ddd;
+    border-radius:17px;
+    padding:20px 8px;
+    text-align:center;
+    cursor:pointer;
+}
+
+.service:hover{
+    transform:translateY(-3px);
+}
+
+.service-icon{
+    font-size:32px;
+    margin-bottom:10px;
+}
+
+.service-name{
+    font-size:13px;
+    font-weight:bold;
+}
+
+.providers{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:15px;
+}
+
+.provider{
+    background:white;
+    border:1px solid #ddd;
+    border-radius:18px;
+    padding:18px;
+}
+
+.provider h3{
+    margin-bottom:7px;
+}
+
+.provider p{
+    color:#666;
+    margin:5px 0;
+}
+
+.green{
+    color:green;
+}
+
+.modal{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.65);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+    z-index:1000;
+}
+
+.modal-box{
+    background:white;
+    width:100%;
+    max-width:550px;
+    max-height:90vh;
+    overflow:auto;
+    border-radius:20px;
+    padding:25px;
+}
+
+.modal-box h2{
+    margin-bottom:10px;
+}
+
+.close{
+    float:right;
+    border:none;
+    background:#eee;
+    border-radius:50%;
+    width:35px;
+    height:35px;
+    font-size:20px;
+    cursor:pointer;
+}
+
+.location-button,
+.request-button{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:11px;
+    margin-top:10px;
+    font-size:15px;
+    cursor:pointer;
+}
+
+.location-button,
+.request-button{
+    background:#173b72;
+    color:white;
+}
+
+.cancel-button{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:11px;
+    margin-top:10px;
+    cursor:pointer;
+}
+
+.mechanic{
+    border:1px solid #ddd;
+    border-radius:15px;
+    padding:18px;
+    margin-top:12px;
+}
+
+.success{
+    text-align:center;
+    padding:20px;
+}
+
+.success-icon{
+    font-size:65px;
+}
+
+@media(max-width:800px){
+
+    .location{
+        display:none;
+    }
+
+    .hero{
+        padding:25px;
+    }
+
+    .hero h1{
+        font-size:27px;
+    }
+
+    .hero-icon{
+        font-size:55px;
+    }
+
+    .emergency{
+        display:block;
+    }
+
+    .red-button{
+        margin-top:15px;
+    }
+
+    .services{
+        grid-template-columns:repeat(3,1fr);
+    }
+
+    .providers{
+        grid-template-columns:1fr;
+    }
+}
+
+</style>
+<style>
+#map {
+    width: 100%;
+    height: 400px;
+    min-height: 400px;
+    border-radius: 18px;
+    margin-top: 15px;
+    border: 1px solid #ddd;
+    background: #e5e5e5;
+}
+</style>
+<style>
+/* =========================================================
+   APE LANGA FINAL RESPONSIVE LAYER
+   Preserves the existing UI while improving phone/tablet UX.
+   ========================================================= */
+html { -webkit-text-size-adjust: 100%; }
+body { overflow-x: hidden; }
+button, input, select, textarea { font: inherit; }
+button { min-height: 44px; }
+img, video, iframe { max-width: 100%; height: auto; }
+main, .master-tools { width: 100%; }
+.services, .providers, .admin-grid, .tool-grid { width: 100%; }
+
+@media (max-width: 800px) {
+  header { height: 62px; padding: 0 16px; position: sticky; top: 0; z-index: 900; }
+  .logo h2 { font-size: 20px; }
+  .logo small { font-size: 11px; }
+  main { padding: 14px 12px 90px; }
+  .hero { border-radius: 18px; padding: 22px 18px; min-height: 150px; }
+  .hero h1 { font-size: clamp(23px, 7vw, 30px); }
+  .hero p { font-size: 14px; }
+  .hero-icon { font-size: 48px; }
+  .search { padding: 10px 12px; margin: 14px 0; min-height: 48px; }
+  .emergency { padding: 18px; border-radius: 16px; }
+  .emergency h2 { font-size: 20px; }
+  .services { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 9px; }
+  .service { padding: 14px 5px; min-width: 0; border-radius: 14px; }
+  .service-icon { font-size: 28px; }
+  .service-name { font-size: 11px; line-height: 1.25; }
+  .providers { grid-template-columns: 1fr; }
+  .provider { padding: 15px; }
+  .modal { align-items: flex-end; padding: 0; }
+  .modal-box {
+    width: 100%;
+    max-width: 100%;
+    max-height: 92vh;
+    border-radius: 22px 22px 0 0;
+    padding: 18px 16px calc(18px + env(safe-area-inset-bottom));
+  }
+  .category-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .category-card { min-height: 78px; padding: 12px 8px; }
+  .category-card span { font-size: 28px; }
+  .provider-card, .admin-row { padding: 14px; }
+  #map { height: 52vh; min-height: 300px; }
+  .master-tools { padding: 0 12px; margin-top: 16px; }
+  .master-panel { padding: 16px; border-radius: 16px; }
+  .tool-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .tool-btn { padding: 13px 8px; font-size: 13px; }
+}
+
+@media (max-width: 480px) {
+  header { padding: 0 12px; }
+  .logo-icon { font-size: 25px; }
+  .logo h2 { font-size: 18px; }
+  .hero { padding: 18px 15px; }
+  .hero-icon { display: none; }
+  .services { grid-template-columns: repeat(2, minmax(0,1fr)) !important; }
+  .search input { font-size: 16px; } /* prevents iOS zoom */
+  .red-button, .request-button, .location-button, .cancel-button { width: 100%; }
+  .admin-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+}
+
+/* Fixed mobile quick navigation */
+.ape-mobile-nav {
+  display: none;
+}
+@media (max-width: 800px) {
+  .ape-mobile-nav {
+    position: fixed;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    left: 0; right: 0; bottom: 0;
+    z-index: 950;
+    background: rgba(255,255,255,.97);
+    border-top: 1px solid #dfe5ec;
+    padding: 7px 6px calc(7px + env(safe-area-inset-bottom));
+    box-shadow: 0 -5px 18px rgba(0,0,0,.08);
+  }
+  .ape-mobile-nav button {
+    border: 0;
+    background: transparent;
+    color: #173b72;
+    min-height: 48px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 700;
+  }
+  .ape-mobile-nav button:active { background: #eef3f8; }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+
+<div class="logo">
+
+<div class="logo-icon">📍</div>
+
+<div>
+<h2>Ape Langa</h2>
+<small>අපේ ළඟ</small>
+</div>
+
+</div>
+
+<div class="location">
+📍 Location
+</div>
+
+</header>
+
+
+<main>
+
+<section class="hero">
+
+<div>
+
+<h1>
+ඔබට අවශ්‍ය දේ,<br>
+<span>ඔබ ළඟින්ම.</span>
+</h1>
+
+<p>
+අවට ඇති සේවා ඉක්මනින් සොයාගන්න.
+</p>
+
+</div>
+
+<div class="hero-icon">
+🤝
+</div>
+
+</section>
+
+
+<div class="search">
+
+🔎
+
+<input
+id="searchBox"
+type="text"
+placeholder="සේවාවක් සොයන්න..."
+onkeyup="searchServices()"
+>
+
+</div>
+
+
+<section class="emergency">
+
+<div>
+
+<b>හදිසි සහාය</b>
+
+<h2>
+🚨 Emergency Help
+</h2>
+
+<p>
+රාත්‍රියේ වාහනයක් කැඩුණාද?
+ඔබ ළඟම සිටින සේවා සපයන්නෙකු සොයාගන්න.
+</p>
+
+</div>
+
+<button class="red-button" onclick="openEmergency()">
+සහාය ලබාගන්න →
+</button>
+
+</section>
+
+
+<h2 class="title">
+🔧 ජනප්‍රිය සේවා
+</h2>
+
+
+<div class="services" id="services">
+
+<div class="service" onclick="openService('Mechanic')">
+<div class="service-icon">🔧</div>
+<div class="service-name">Mechanic</div>
+</div>
+
+<div class="service" onclick="openService('Towing')">
+<div class="service-icon">🚗</div>
+<div class="service-name">Towing</div>
+</div>
+
+<div class="service" onclick="openService('Battery')">
+<div class="service-icon">🔋</div>
+<div class="service-name">Battery</div>
+</div>
+
+<div class="service" onclick="openService('Tyre')">
+<div class="service-icon">🛞</div>
+<div class="service-name">Tyre Service</div>
+</div>
+
+<div class="service" onclick="openService('Fuel')">
+<div class="service-icon">⛽</div>
+<div class="service-name">Fuel</div>
+</div>
+
+<div class="service" onclick="openService('Bike Repair')">
+<div class="service-icon">🏍️</div>
+<div class="service-name">Bike Repair</div>
+</div>
+
+</div>
+
+
+<h2 class="title">
+📍 ඔබ ළඟින්ම
+</h2>
+
+
+<div class="providers">
+
+<div class="provider">
+
+<h3>🔧 ABC Auto</h3>
+
+<p>Mechanic • 1.2 km</p>
+
+<p>⭐ 4.8</p>
+
+<p class="green">🟢 Available</p>
+
+</div>
+
+
+<div class="provider">
+
+<h3>🔧 Nimal Auto Care</h3>
+
+<p>Mechanic • 2.0 km</p>
+
+<p>⭐ 4.7</p>
+
+<p class="green">🟢 Available</p>
+
+</div>
+
+
+<div class="provider">
+
+<h3>🔋 City Battery</h3>
+
+<p>Battery • 2.5 km</p>
+
+<p>⭐ 4.9</p>
+
+<p class="green">🟢 Available</p>
+
+</div>
+
+</div>
+
+
+<!-- APE LANGA - VEHICLE HIRE & ACCOMMODATION -->
+<section id="marketplaceSection" style="margin-top:30px;">
+  <h2 class="title">🚗🏠 අමතර සේවා</h2>
+
+  <div class="services" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr));">
+    <div class="service" onclick="openVehicleHire()">
+      <div class="service-icon">🚗</div>
+      <div class="service-name">Vehicle Hire</div>
+    </div>
+    <div class="service" onclick="openAccommodation()">
+      <div class="service-icon">🏠</div>
+      <div class="service-name">Accommodation</div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+
+
+<script>
+
+/* =========================================================
+   APE LANGA – MASTER PROMPT v2
+   Existing prototype features preserved + new modules.
+   NOTE: localStorage is for prototype/testing only.
+   Production requires Backend + Database + Secure Payment Gateway.
+   ========================================================= */
+
+const APE_LANGA_COMMISSION_RATES = {
+    vehicleServices: 0.10,
+    vehicleHire: 0.10,
+    accommodation: 0.10
+};
+
+let selectedRating = 0;
+let selectedRatingProvider = "Mechanic";
+
+const VEHICLE_TYPES = [
+    ["Car","🚗"],["Van","🚐"],["Three-Wheeler","🛺"],
+    ["Bike","🏍️"],["Truck / Lorry","🚚"],["Other Vehicles","🚙"]
+];
+
+const ACCOMMODATION_TYPES = [
+    ["Hotel","🏨"],["Guest House","🏠"],["Room","🛏️"],
+    ["Villa","🏡"],["Apartment","🏢"],["Lodge","🏕️"],["Other","🏘️"]
+];
+
+function safeParse(key, fallback=null){
+    try { return JSON.parse(localStorage.getItem(key) || "null") ?? fallback; }
+    catch(e){ console.warn("Storage read error:", key, e); return fallback; }
+}
+function save(key, value){
+    try { localStorage.setItem(key, JSON.stringify(value)); return true; }
+    catch(e){ console.error("Storage write error:", key, e); return false; }
+}
+function esc(value){
+    return String(value ?? "").replace(/[&<>"']/g, s => ({
+        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+    }[s]));
+}
+function money(v){ return `Rs. ${Number(v || 0).toFixed(2)}`; }
+
+function openModal(content){
+    const old = document.getElementById("modal");
+    if(old) old.remove();
+    const modal = document.createElement("div");
+    modal.id = "modal";
+    modal.className = "modal";
+    modal.innerHTML = `
+        <div class="modal-box">
+            <button class="close" onclick="closeModal()" aria-label="Close">×</button>
+            ${content}
+        </div>`;
+    document.body.appendChild(modal);
+}
+function closeModal(){
+    const modal = document.getElementById("modal");
+    if(modal) modal.remove();
+}
+function field(id,label,type="text",placeholder="",value=""){
+    return `<label>${esc(label)}</label>
+    <input id="${esc(id)}" type="${esc(type)}" value="${esc(value)}"
+      placeholder="${esc(placeholder)}"
+      style="width:100%;padding:13px;margin:8px 0 15px;border:1px solid #ddd;border-radius:10px;">`;
+}
+
+/* ---------------- EXISTING CUSTOMER / EMERGENCY ---------------- */
+
+function loadMechanicRating(){
+    const rating = localStorage.getItem("apeLangaRating");
+    const el = document.getElementById("mechanicAverageRating");
+    const total = document.getElementById("mechanicTotalRatings");
+    if(el) el.innerHTML = rating ? "⭐ " + Number(rating).toFixed(1) : "⭐ 0.0";
+    if(total) total.innerHTML = rating ? "1" : "0";
+}
+window.addEventListener("load", () => {
+    loadMechanicRating();
+    checkRequestStatus();
+    refreshMasterDashboard();
+});
+
+function openEmergency(){
+    openModal(`
+      <h2>🚨 Emergency Help</h2>
+      <p>ඔබට අවශ්‍ය සේවාව තෝරන්න.</p>
+      <button class="location-button" onclick="startMechanic()">🔧 Mechanic</button>
+      <button class="location-button" onclick="simpleRequest('Towing')">🚗 Towing</button>
+      <button class="location-button" onclick="simpleRequest('Battery')">🔋 Battery</button>
+      <button class="location-button" onclick="simpleRequest('Tyre')">🛞 Tyre</button>
+      <button class="location-button" onclick="simpleRequest('Fuel')">⛽ Fuel</button>
+      <button class="cancel-button" onclick="closeModal()">Cancel</button>
+    `);
+}
+function startMechanic(){
+    openModal(`
+      <div style="text-align:center">
+        <div style="font-size:55px">📍</div>
+        <h2>ඔබගේ Location අවශ්‍යයි</h2>
+        <p>ඔබ ළඟම සිටින Mechanic සොයාගැනීමට Location එක ලබාගන්න.</p>
+        <button class="location-button" onclick="getLocation()">📍 Allow My Location</button>
+        <button class="cancel-button" onclick="closeModal()">Cancel</button>
+      </div>`);
+}
+function getLocation(){
+    if(!navigator.geolocation){
+        alert("ඔබගේ Browser එක GPS සඳහා සහාය නොදක්වයි."); return;
+    }
+    navigator.geolocation.getCurrentPosition(
+        p => showNearbyServices(p.coords.latitude,p.coords.longitude),
+        () => alert("Location ලබාගැනීමට නොහැකි විය. Browser Location Permission එක Allow කරන්න."),
+        {enableHighAccuracy:true, timeout:10000, maximumAge:0}
+    );
+}
+function showMechanics(lat,lon){ showNearbyServices(lat,lon); }
+function showNearbyServices(lat,lon){
+    openModal(`
+      <h2>🗺️ Mechanics Near You</h2>
+      <p style="color:green">✅ Location ලබාගත්තා</p>
+      <div id="map"></div>
+      ${nearbyMechanicCard("ABC Auto","4.8","1.2 km","10–15 minutes")}
+      ${nearbyMechanicCard("Nimal Auto Care","4.7","2.0 km","15–20 minutes")}
+      <button class="cancel-button" onclick="closeModal()">Close</button>
+    `);
+    setTimeout(() => {
+        const mapEl = document.getElementById("map");
+        if(!mapEl || typeof L === "undefined") return;
+        const map = L.map("map").setView([lat,lon],14);
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+            {attribution:"&copy; OpenStreetMap contributors"}).addTo(map);
+        L.marker([lat,lon]).addTo(map).bindPopup("📍 ඔබගේ Location").openPopup();
+        [[lat+0.008,lon+0.006,"ABC Auto<br>⭐ 4.8<br>🟢 Available"],
+         [lat-0.006,lon+0.010,"Nimal Auto Care<br>⭐ 4.7<br>🟢 Available"]]
+         .forEach(x => L.marker([x[0],x[1]]).addTo(map).bindPopup(x[2]));
+    },250);
+}
+function nearbyMechanicCard(name,rating,distance,time){
+    return `<div class="mechanic">
+      <h3>🔧 ${esc(name)}</h3><p>⭐ ${esc(rating)}</p><p>📍 ${esc(distance)}</p>
+      <p class="green">🟢 Available</p><p>⏱️ ${esc(time)}</p>
+      <button class="request-button" onclick="sendRequest('${esc(name)}')">Request Service</button>
+    </div>`;
+}
+function sendRequest(name){
+    save("apeLangaRequest", {
+        provider:name, service:"Mechanic", status:"waiting",
+        createdAt:new Date().toISOString()
+    });
+    localStorage.setItem("apeLangaRequestStatus","waiting");
+    openModal(`
+      <div class="success"><div class="success-icon">✅</div>
+      <h2>Request Sent!</h2><p>Your request was sent to <b>${esc(name)}</b>.</p>
+      <div id="requestStatus" class="status-box">🟡 Waiting for mechanic response...</div>
+      <button class="request-button" onclick="closeModal()">Done</button>
+      <button class="request-button" onclick="showRating('${esc(name)}')">⭐ Rate Service</button>
+      </div>`);
+}
+function simpleRequest(service){
+    save("apeLangaRequest",{service,status:"requested",createdAt:new Date().toISOString()});
+    openModal(`<div class="success"><div class="success-icon">🚨</div>
+      <h2>${esc(service)} Request</h2><p>${esc(service)} සේවාව සඳහා request එක ආරම්භ කර ඇත.</p>
+      <button class="request-button" onclick="closeModal()">Continue</button></div>`);
+}
+function openService(service){
+    if(service === "Mechanic"){ startMechanic(); return; }
+    simpleRequest(service);
+}
+function searchServices(){
+    const text = (document.getElementById("searchBox")?.value || "").toLowerCase();
+    document.querySelectorAll(".service").forEach(item => {
+        item.style.display = item.innerText.toLowerCase().includes(text) ? "block" : "none";
+    });
+}
+
+/* ---------------- EXISTING MECHANIC ---------------- */
+
+function openMechanicRegistration(){
+    openModal(`<h2>🔧 Mechanic Registration</h2>
+      <p style="color:#666">Ape Langa සේවා ජාලයට සම්බන්ධ වන්න.</p>
+      ${field("mechanicName","Full Name","text","ඔබගේ සම්පූර්ණ නම")}
+      ${field("mechanicPhone","Phone Number","tel","07XXXXXXXX")}
+      <label>Service Type</label>
+      <select id="mechanicService" style="width:100%;padding:13px;margin:8px 0 15px;border:1px solid #ddd;border-radius:10px">
+        <option value="">Select Service</option><option>Mechanic</option><option>Towing</option>
+        <option>Battery</option><option>Tyre Service</option><option>Bike Repair</option>
+      </select>
+      ${field("mechanicExperience","Years of Experience","number","උදා: 5")}
+      <button class="request-button" onclick="registerMechanic()">Register Now</button>
+      <button class="cancel-button" onclick="closeModal()">Cancel</button>`);
+}
+function registerMechanic(){
+    const name=document.getElementById("mechanicName")?.value.trim();
+    const phone=document.getElementById("mechanicPhone")?.value.trim();
+    const service=document.getElementById("mechanicService")?.value;
+    const experience=document.getElementById("mechanicExperience")?.value;
+    if(!name||!phone||!service){ alert("කරුණාකර Name, Phone Number සහ Service Type ඇතුළත් කරන්න."); return; }
+    save("apeLangaMechanicRegistration",{name,phone,service,experience,status:"pending",createdAt:new Date().toISOString()});
+    openModal(`<div class="success"><div class="success-icon">✅</div>
+      <h2>Registration Received</h2><p>ස්තුතියි <b>${esc(name)}</b>.</p>
+      <p>ඔබගේ Mechanic registration request එක ලැබුණා.</p>
+      <button class="request-button" onclick="closeModal()">Done</button></div>`);
+}
+function setMechanicOnline(){
+    const status=document.getElementById("mechanicStatus");
+    if(status){status.innerHTML="🟢 Available";status.style.color="green";}
+    localStorage.setItem("apeLangaMechanicOnline","true");
+}
+function setMechanicOffline(){
+    const status=document.getElementById("mechanicStatus");
+    if(status){status.innerHTML="🔴 Offline";status.style.color="red";}
+    localStorage.setItem("apeLangaMechanicOnline","false");
+}
+function updateMechanicLocation(){
+    if(!navigator.geolocation){alert("මෙම browser එක Location support නොකරයි.");return;}
+    navigator.geolocation.getCurrentPosition(p=>{
+        const lat=p.coords.latitude,lon=p.coords.longitude;
+        const el=document.getElementById("mechanicLocation");
+        if(el) el.innerHTML=`📍 Location Updated<br><br>Latitude: ${lat.toFixed(6)}<br>Longitude: ${lon.toFixed(6)}`;
+        save("apeLangaMechanicLocation",{lat,lon,updatedAt:new Date().toISOString()});
+    },()=>alert("Location ලබාගැනීමට Permission ලබා දෙන්න."));
+}
+function acceptRequest(){
+    localStorage.setItem("apeLangaRequestStatus","accepted");
+    const box=document.getElementById("mechanicRequests");
+    if(box) box.innerHTML=`<div class="success"><div class="success-icon">✅</div>
+      <h2>Request Accepted</h2><p>Customer request එක ඔබ විසින් භාරගන්නා ලදී.</p>
+      <button class="request-button" onclick="startJourney()">🚗 Start Journey</button>
+      <button class="request-button" onclick="mechanicArrived()">📍 Arrived</button>
+      <button class="request-button" onclick="startService()">🔧 Start Service</button>
+      <button class="request-button" onclick="completeService()">🔧 Complete Service</button></div>`;
+    checkRequestStatus();
+}
+function rejectRequest(){
+    localStorage.setItem("apeLangaRequestStatus","rejected");
+    const box=document.getElementById("mechanicRequests");
+    if(box) box.innerHTML=`<div class="success"><div class="success-icon">❌</div><h2>Request Rejected</h2>
+      <p>මෙම request එක ප්‍රතික්ෂේප කරන ලදී.</p></div>`;
+}
+function startJourney(){ localStorage.setItem("apeLangaRequestStatus","on_the_way"); checkRequestStatus(); }
+function mechanicArrived(){ localStorage.setItem("apeLangaRequestStatus","arrived"); checkRequestStatus(); }
+function startService(){ localStorage.setItem("apeLangaRequestStatus","service_started"); checkRequestStatus(); }
+function completeRequest(){ completeService(); }
+function completeService(){
+    localStorage.setItem("apeLangaRequestStatus","service_completed");
+    checkRequestStatus();
+    openFinalBill("Vehicle Service");
+}
+function checkRequestStatus(){
+    const status=localStorage.getItem("apeLangaRequestStatus");
+    const box=document.getElementById("requestStatus");
+    if(!box) return;
+    const map={
+      waiting:["🟡 Waiting for mechanic response...","#fff8e1","#b26a00"],
+      accepted:["🟢 Mechanic Accepted","#e8f5e9","green"],
+      on_the_way:["🚗 Mechanic is on the way","#e3f2fd","#1565c0"],
+      arrived:["📍 Mechanic Has Arrived","#fff3e0","#e65100"],
+      service_started:["🔧 Service Started","#f3e5f5","#6a1b9a"],
+      service_completed:["✅ Service Completed","#e8f5e9","#2e7d32"],
+      rejected:["❌ Request Rejected","#ffebee","#c62828"]
+    };
+    if(map[status]){box.innerHTML=map[status][0];box.style.background=map[status][1];box.style.color=map[status][2];}
+}
+setInterval(checkRequestStatus,2000);
+
+/* ---------------- CUSTOMER LOGIN ---------------- */
+
+
+function openCustomerLogin(){
+    openModal(`
+      <h2>👤 Customer Login</h2>
+      <p style="color:#666">Ape Langa වෙත පිවිසෙන්න.</p>
+
+      ${field("customerEmail","Email","email","you@example.com")}
+      ${field("customerPassword","customerPassword","password","Password")}
+
+      <button class="request-button" onclick="customerLogin()">
+        🔐 Login
+      </button>
+
+      <button class="cancel-button" onclick="openCustomerRegister()">
+        📝 Create Account
+      </button>
+
+      <button class="cancel-button" onclick="closeModal()">
+        Cancel
+      </button>
+    `);
+}
+
+async function customerLogin(){
+
+    const email = document.getElementById("customerEmail")?.value.trim();
+    const password = document.getElementById("customerPassword")?.value;
+
+    if(!email || !password){
+        alert("කරුණාකර Email සහ Password ඇතුළත් කරන්න.");
+        return;
+    }
+
+    if(!window.ApeLanga?.auth?.login){
+        alert("Supabase authentication එක සූදානම් නැහැ.");
+        return;
+    }
+
+    try{
+
+        const result = await window.ApeLanga.auth.login(email,password);
+
+        const user = result?.user;
+
+        if(!user){
+            throw new Error("Login failed.");
+        }
+
+        const profile = await window.ApeLanga.auth.profile();
+
+        localStorage.setItem("apeLangaCustomerName",
+            profile?.full_name || user.user_metadata?.full_name || email
+        );
+
+        localStorage.setItem("apeLangaCustomerEmail",email);
+
+        openModal(`
+          <div class="success">
+            <div class="success-icon">✅</div>
+            <h2>Welcome to Ape Langa</h2>
+            <p>ආයුබෝවන් <b>${esc(
+              profile?.full_name ||
+              user.user_metadata?.full_name ||
+              email
+            )}</b>!</p>
+            <p style="color:#168a45">
+              Login සාර්ථකයි.
+            </p>
+
+        <button class="request-button"
+        onclick="window.location.href='customer-dashboard.html';">
+    Continue
+</button>
+          </div>
+        `);
+
+    }catch(error){
+
+        console.error("[Ape Langa] Customer login error:",error);
+
+        alert(
+          error?.message ||
+          "Login කිරීමට නොහැකි විය. Email සහ Password පරීක්ෂා කරන්න."
+        );
+    }
+}
+function showCustomerHome(){
+
+    const name =
+        localStorage.getItem("apeLangaCustomerName") || "Customer";
+
+    openModal(`
+        <div style="text-align:center;">
+
+            <div style="font-size:55px;">👤</div>
+
+            <h2 style="margin:8px 0;">
+                Welcome to Ape Langa
+            </h2>
+
+            <p style="font-size:18px;">
+                <b>${esc(name)}</b>
+            </p>
+
+            <p style="color:#168a45;">
+                ✅ ඔබ සාර්ථකව Login වී ඇත.
+            </p>
+
+            <div style="
+                display:grid;
+                grid-template-columns:repeat(2,1fr);
+                gap:12px;
+                margin-top:20px;
+            ">
+
+                <button class="tool-btn"
+                    onclick="showMyBookings()">
+                    📋<br>
+                    My Bookings
+                </button>
+
+                <button class="tool-btn"
+                    onclick="openVehicleHire()">
+                    🚗<br>
+                    Vehicle Hire
+                </button>
+
+                <button class="tool-btn"
+                    onclick="openAccommodation()">
+                    🏠<br>
+                    Accommodation
+                </button>
+
+                <button class="tool-btn"
+                    onclick="openFinalBill()">
+                    🧾<br>
+                    Final Bill
+                </button>
+
+            </div>
+
+            <button
+                class="cancel-button"
+                style="margin-top:15px;"
+                onclick="closeModal()">
+                ✕ Close
+            </button>
+
+        </div>
+    `);
+}
+
+/* ---------------- CUSTOMER REGISTER ---------------- */
+
+function openCustomerRegister(){
+    openModal(`
+      <h2>📝 Create Customer Account</h2>
+      <p style="color:#666">
+        Ape Langa customer account එකක් සාදන්න.
+      </p>
+
+      ${field("registerName","Full Name","text","ඔබගේ සම්පූර්ණ නම")}
+      ${field("registerPhone","Phone Number","tel","07XXXXXXXX")}
+      ${field("registerEmail","Email","email","you@example.com")}
+      ${field("registerPassword","Password","password","Password")}
+      ${field("registerPasswordConfirm","Confirm Password","password","Password නැවත ඇතුළත් කරන්න")}
+
+      <button class="request-button" onclick="customerRegister()">
+        📝 Create Account
+      </button>
+
+      <button class="cancel-button" onclick="openCustomerLogin()">
+        🔐 Back to Login
+      </button>
+
+      <button class="cancel-button" onclick="closeModal()">
+        Cancel
+      </button>
+    `);
+}
+
+async function customerRegister(){
+
+    const fullName =
+        document.getElementById("registerName")?.value.trim();
+
+    const phone =
+        document.getElementById("registerPhone")?.value.trim();
+
+    const email =
+        document.getElementById("registerEmail")?.value.trim();
+
+    const password =
+        document.getElementById("registerPassword")?.value;
+
+    const passwordConfirm =
+        document.getElementById("registerPasswordConfirm")?.value;
+
+    if(!fullName || !phone || !email || !password || !passwordConfirm){
+        alert("කරුණාකර සියලුම තොරතුරු ඇතුළත් කරන්න.");
+        return;
+    }
+
+    if(password !== passwordConfirm){
+        alert("Passwords දෙක සමාන නැහැ.");
+        return;
+    }
+
+    if(password.length < 6){
+        alert("Password එක අවම වශයෙන් characters 6ක් විය යුතුයි.");
+        return;
+    }
+
+    if(!window.ApeLanga?.auth?.register){
+        alert("Supabase authentication එක සූදානම් නැහැ.");
+        return;
+    }
+
+    try{
+
+        const result = await window.ApeLanga.auth.register({
+            email,
+            password,
+            fullName,
+            phone,
+            role: "customer"
+        });
+
+        const user = result?.user;
+
+        if(!user){
+            throw new Error("Account එක create කිරීමට නොහැකි විය.");
+        }
+
+        localStorage.setItem(
+            "apeLangaCustomerName",
+            fullName
+        );
+
+        localStorage.setItem(
+            "apeLangaCustomerPhone",
+            phone
+        );
+
+        localStorage.setItem(
+            "apeLangaCustomerEmail",
+            email
+        );
+
+        openModal(`
+          <div class="success">
+            <div class="success-icon">✅</div>
+
+            <h2>Account Created!</h2>
+
+            <p>
+              ආයුබෝවන් <b>${esc(fullName)}</b>!
+            </p>
+
+            <p style="color:#168a45">
+              ඔබගේ Ape Langa customer account එක සාර්ථකව නිර්මාණය කළා.
+            </p>
+
+            <button class="request-button"
+              onclick="closeModal();openCustomerLogin()">
+              🔐 Continue to Login
+            </button>
+          </div>
+        `);
+
+    }catch(error){
+
+        console.error(
+            "[Ape Langa] Customer registration error:",
+            error
+        );
+
+        alert(
+            error?.message ||
+            "Account එක create කිරීමට නොහැකි විය."
+        );
+    }
+}
+
+/* ---------------- VEHICLE HIRE ---------------- */
+
+function openVehicleHire(){
+    openModal(`<h2>🚗 Vehicle Hire</h2>
+      <p style="color:#666">Vehicle category, location, date, time සහ duration තෝරන්න.</p>
+      <div class="category-grid">${VEHICLE_TYPES.map(v=>`
+        <button class="category-card" onclick="openVehicleSearch('${v[0]}')"><span>${v[1]}</span><b>${v[0]}</b></button>`).join("")}</div>
+      <button class="request-button" onclick="openVehicleProviderRegistration()">➕ Register Vehicle Provider</button>
+      <button class="cancel-button" onclick="closeModal()">Close</button>`);
+}
+function openVehicleSearch(type="Car"){
+    openModal(`<h2>🔎 ${esc(type)} Hire Search</h2>
+      ${field("hireLocation","Location","text","Colombo / Kandy / Galle")}
+      ${field("hireDate","Date","date")}
+      ${field("hireStartTime","Start Time","time")}
+      ${field("hireDuration","Duration / Number of Days","number","1","1")}
+      <label>Driver</label><select id="hireDriver" style="width:100%;padding:13px;margin:8px 0 15px;border:1px solid #ddd;border-radius:10px">
+        <option value="driver">Driver Available</option><option value="self">Self Drive</option>
+      </select>
+      <button class="request-button" onclick="searchHireVehicles('${esc(type)}')">🔎 Find Available Vehicles</button>
+      <button class="cancel-button" onclick="openVehicleHire()">Back</button>`);
+}
+function searchHireVehicles(type){
+    const location=document.getElementById("hireLocation")?.value.trim()||"Any Location";
+    const date=document.getElementById("hireDate")?.value||"";
+    const startTime=document.getElementById("hireStartTime")?.value||"";
+    const duration=Number(document.getElementById("hireDuration")?.value||1);
+    const driver=document.getElementById("hireDriver")?.value||"driver";
+    const vehicles=safeParse("apeLangaVehicles",[]);
+    const matches=vehicles.filter(v=>v.vehicleType===type && (!v.location || !location || v.location.toLowerCase().includes(location.toLowerCase())));
+    const demo=matches.length?matches:[{
+        id:"demo-car-1",providerName:"ABC Vehicle Hire",phone:"07XXXXXXXX",vehicleType:type,
+        vehicleNumber:"WP-CAB-1234",brand:"Toyota",model:"Axio",year:"2022",
+        pricePerDay:5000,pricePerHour:800,rating:4.8,availability:"Available",
+        driverAvailable:true,selfDriveAvailable:true,location
+    }];
+    openModal(`<h2>🚗 Available ${esc(type)} Vehicles</h2>
+      <p>📍 ${esc(location)} ${date?`• 📅 ${esc(date)}`:""} ${startTime?`• ⏰ ${esc(startTime)}`:""} • ${duration} day(s)</p>
+      ${demo.map(v=>vehicleCard(v,duration,driver)).join("")}
+      <button class="cancel-button" onclick="openVehicleSearch('${esc(type)}')">Back</button>`);
+}
+function vehicleCard(v,duration,driver){
+    const rate=driver==="self"?(v.selfDriveAvailable!==false):(v.driverAvailable!==false);
+    const total=Number(v.pricePerDay||0)*duration;
+    return `<div class="provider-card"><h3>🚗 ${esc(v.brand||"Vehicle")} ${esc(v.model||"")}</h3>
+      <p><b>Provider:</b> ${esc(v.providerName)}</p><p>🔢 ${esc(v.vehicleNumber)}</p>
+      <p>📍 ${esc(v.location||"Location not set")}</p><p>⭐ ${esc(v.rating||0)} • 🟢 ${esc(v.availability||"Available")}</p>
+      <p>💰 ${money(v.pricePerDay)}/day • ${money(v.pricePerHour)}/hour</p>
+      <p>${rate?"👨‍✈️ Driver/Self-drive option available":"⚠️ Selected option unavailable"}</p>
+      <button class="request-button" ${rate?"":"disabled"} onclick='createHireBooking(${JSON.stringify(v)},${Number(duration)})'>🚗 Hire Request</button>
+    </div>`;
+}
+
+async function createHireBooking(vehicle, duration){
+
+    const customer =
+        localStorage.getItem("apeLangaCustomerName") ||
+        "Guest Customer";
+
+    try {
+
+        // Supabase login check
+        const user =
+            await window.ApeLanga.auth.currentUser();
+
+        if(!user){
+            alert("කරුණාකර මුලින් Login වෙන්න.");
+            return;
+        }
+
+        // Create booking in Supabase
+        const booking =
+            await window.ApeLanga.db.createBooking({
+
+                booking_type: "vehicle_hire",
+
+                provider_id:
+                    vehicle.providerId ||
+                    vehicle.provider_id ||
+                    null,
+
+                vehicle_id:
+    (
+        typeof (vehicle.id || vehicle.vehicle_id) === "string" &&
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+            vehicle.id || vehicle.vehicle_id
+        )
+    )
+        ? (vehicle.id || vehicle.vehicle_id)
+        : null,
+        
+                amount:
+                    Number(vehicle.pricePerDay || 0) *
+                    Number(duration || 1),
+
+                duration:
+                    Number(duration || 1),
+
+                customer_note:
+                    "Vehicle: " +
+                    (vehicle.vehicleType || "Vehicle") +
+                    " | Provider: " +
+                    (vehicle.providerName || "Provider")
+
+            });
+
+        // Keep existing prototype data too
+        const localBooking = {
+
+            id:
+                booking.booking_number ||
+                "VH-" + Date.now(),
+
+            type: "Vehicle Hire",
+
+            category:
+                vehicle.vehicleType,
+
+            customer,
+
+            provider:
+                vehicle.providerName,
+
+            vehicle,
+
+            duration,
+
+            amount:
+                Number(vehicle.pricePerDay || 0) *
+                Number(duration),
+
+            status:
+                booking.status || "pending",
+
+            createdAt:
+                new Date().toISOString()
+
+        };
+
+        const list =
+            safeParse("apeLangaBookings", []);
+
+        list.push(localBooking);
+
+        save(
+            "apeLangaBookings",
+            list
+        );
+
+        save(
+            "apeLangaHireRequest",
+            localBooking
+        );
+
+        showBookingSuccess(
+            "🚗",
+            "Vehicle Hire Request Sent",
+            localBooking
+        );
+
+    } catch(error) {
+
+        console.error(
+            "[Ape Langa] Vehicle booking error:",
+            error
+        );
+
+        alert(
+            "Vehicle booking එක save කිරීමට නොහැකි විය.\n\n" +
+            (error.message || error)
+        );
+    }
+}
+
+function openVehicleProviderRegistration(){
+    openModal(`<h2>🚗 Vehicle Provider Registration</h2>
+      <p style="color:#666">Vehicle එක Ape Langa marketplace එකට ලියාපදිංචි කරන්න.</p>
+      ${field("vpName","Provider Name","text","Company / Owner Name")}
+      ${field("vpPhone","Phone Number","tel","07XXXXXXXX")}
+      <label>Vehicle Type</label><select id="vpType" class="full-select">${VEHICLE_TYPES.map(v=>`<option>${v[0]}</option>`).join("")}</select>
+      ${field("vpNumber","Vehicle Number","text","ABC-1234")}
+      ${field("vpBrand","Brand","text","Toyota")}
+      ${field("vpModel","Model","text","Axio")}
+      ${field("vpYear","Year","number","2022")}
+      ${field("vpLocation","Location","text","Colombo")}
+      ${field("vpGPS","GPS Location","text","Latitude, Longitude")}
+      <label>Vehicle Photos</label><input id="vpPhotos" type="file" accept="image/*" multiple style="width:100%;margin:8px 0 15px">
+      <label>Driver Available</label><select id="vpDriver" class="full-select"><option>Yes</option><option>No</option></select>
+      <label>Self Drive Available</label><select id="vpSelf" class="full-select"><option>Yes</option><option>No</option></select>
+      ${field("vpHour","Price Per Hour","number","0")}
+      ${field("vpDay","Price Per Day","number","0")}
+      <label>Availability</label><select id="vpAvailability" class="full-select"><option>Available</option><option>Unavailable</option></select>
+      ${field("vpDescription","Description","text","Vehicle details")}
+      <button class="request-button" onclick="registerVehicleProvider()">Register Vehicle</button>
+      <button class="cancel-button" onclick="closeModal()">Cancel</button>`);
+}
+function registerVehicleProvider(){
+    const v={
+      id:"V-"+Date.now(),providerName:document.getElementById("vpName")?.value.trim(),
+      phone:document.getElementById("vpPhone")?.value.trim(),vehicleType:document.getElementById("vpType")?.value,
+      vehicleNumber:document.getElementById("vpNumber")?.value.trim(),brand:document.getElementById("vpBrand")?.value.trim(),
+      model:document.getElementById("vpModel")?.value.trim(),year:document.getElementById("vpYear")?.value,
+      location:document.getElementById("vpLocation")?.value.trim(),gps:document.getElementById("vpGPS")?.value.trim(),
+      driverAvailable:document.getElementById("vpDriver")?.value==="Yes",selfDriveAvailable:document.getElementById("vpSelf")?.value==="Yes",
+      pricePerHour:Number(document.getElementById("vpHour")?.value||0),pricePerDay:Number(document.getElementById("vpDay")?.value||0),
+      availability:document.getElementById("vpAvailability")?.value,description:document.getElementById("vpDescription")?.value.trim(),
+      status:"pending",rating:0,createdAt:new Date().toISOString()
+    };
+    if(!v.providerName||!v.phone||!v.vehicleNumber){alert("Provider Name, Phone Number සහ Vehicle Number අවශ්‍යයි.");return;}
+    const list=safeParse("apeLangaVehicles",[]);list.push(v);save("apeLangaVehicles",list);
+    openModal(`<div class="success"><div class="success-icon">✅</div><h2>Vehicle Registered</h2>
+      <p>${esc(v.providerName)}ගේ ${esc(v.vehicleType)} registration එක ලැබුණා.</p>
+      <button class="request-button" onclick="closeModal()">Done</button></div>`);
+}
+
+/* ---------------- ACCOMMODATION ---------------- */
+
+function openAccommodation(){
+    openModal(`<h2>🏠 Accommodation</h2>
+      <p style="color:#666">Location, check-in/out, guests සහ rooms තෝරන්න.</p>
+      <div class="category-grid">${ACCOMMODATION_TYPES.map(v=>`
+        <button class="category-card" onclick="openAccommodationSearch('${v[0]}')"><span>${v[1]}</span><b>${v[0]}</b></button>`).join("")}</div>
+      <button class="request-button" onclick="openAccommodationProviderRegistration()">➕ Register Accommodation</button>
+      <button class="cancel-button" onclick="closeModal()">Close</button>`);
+}
+function openAccommodationSearch(type="Hotel"){
+    openModal(`<h2>🔎 ${esc(type)} Search</h2>
+      ${field("acLocation","Location","text","Colombo / Kandy / Galle")}
+      ${field("acCheckIn","Check-in Date","date")}
+      ${field("acCheckOut","Check-out Date","date")}
+      ${field("acGuests","Number of Guests","number","2","2")}
+      ${field("acRooms","Number of Rooms","number","1","1")}
+      <button class="request-button" onclick="searchAccommodation('${esc(type)}')">🔎 Search Accommodation</button>
+      <button class="cancel-button" onclick="openAccommodation()">Back</button>`);
+}
+function searchAccommodation(type){
+    const location=document.getElementById("acLocation")?.value.trim()||"Any Location";
+    const checkIn=document.getElementById("acCheckIn")?.value||"";
+    const checkOut=document.getElementById("acCheckOut")?.value||"";
+    const guests=Number(document.getElementById("acGuests")?.value||2);
+    const rooms=Number(document.getElementById("acRooms")?.value||1);
+    const list=safeParse("apeLangaAccommodations",[]);
+    const matches=list.filter(a=>a.type===type && (!a.location || a.location.toLowerCase().includes(location.toLowerCase())));
+    const demo=matches.length?matches:[{
+      id:"AC-DEMO",propertyName:"Ape Langa Guest Property",ownerName:"Demo Provider",phone:"07XXXXXXXX",
+      type,location,roomType:"Deluxe Room",numberOfRooms:5,numberOfGuests:4,pricePerNight:8500,
+      availableRooms:3,facilities:"Wi-Fi, Parking, Breakfast",checkInTime:"14:00",checkOutTime:"11:00",rating:4.7
+    }];
+    openModal(`<h2>🏠 Available ${esc(type)}</h2><p>📍 ${esc(location)} • 👥 ${guests} guests • 🛏️ ${rooms} room(s)</p>
+      ${demo.map(a=>accommodationCard(a,checkIn,checkOut,guests,rooms)).join("")}
+      <button class="cancel-button" onclick="openAccommodationSearch('${esc(type)}')">Back</button>`);
+}
+function accommodationCard(a,checkIn,checkOut,guests,rooms){
+    const nights=calculateNights(checkIn,checkOut)||1;
+    const total=Number(a.pricePerNight||0)*nights*rooms;
+    return `<div class="provider-card"><h3>🏠 ${esc(a.propertyName)}</h3>
+      <p><b>Owner:</b> ${esc(a.ownerName)}</p><p>📍 ${esc(a.location)}</p>
+      <p>🛏️ ${esc(a.roomType)} • ${esc(a.availableRooms)} rooms</p><p>👥 Up to ${esc(a.numberOfGuests)} guests/room</p>
+      <p>⭐ ${esc(a.rating||0)} • 💰 ${money(a.pricePerNight)}/night</p>
+      <p>🛜 ${esc(a.facilities||"Facilities available")}</p>
+      <button class="request-button" onclick='createAccommodationBooking(${JSON.stringify(a)},${Number(nights)},${Number(rooms)},${Number(guests)})'>🏠 Booking Request</button>
+    </div>`;
+}
+function calculateNights(a,b){
+    if(!a||!b)return 0;
+    const d=(new Date(b)-new Date(a))/86400000;
+    return d>0?Math.ceil(d):0;
+}
+
+async function createAccommodationBooking(property, nights, rooms, guests){
+
+    const customer =
+        localStorage.getItem("apeLangaCustomerName") ||
+        "Guest Customer";
+
+    try {
+
+        // Check Supabase login
+        const user =
+            await window.ApeLanga.auth.currentUser();
+
+        if(!user){
+            alert("කරුණාකර මුලින් Login වෙන්න.");
+            return;
+        }
+
+        // Save booking to Supabase
+        const booking =
+            await window.ApeLanga.db.createBooking({
+
+                booking_type: "Accommodation",
+
+                provider_id:
+                    property.providerId ||
+                    property.provider_id ||
+                    null,
+
+                accommodation_id:
+                    property.id ||
+                    property.accommodation_id ||
+                    null,
+
+                start_date:
+                    property.checkIn ||
+                    null,
+
+                end_date:
+                    property.checkOut ||
+                    null,
+
+                guests:
+                    Number(guests || 1),
+
+                rooms:
+                    Number(rooms || 1),
+
+                amount:
+                    Number(property.pricePerNight || 0) *
+                    Number(nights || 1) *
+                    Number(rooms || 1),
+
+                customer_note:
+                    "Accommodation: " +
+                    (property.propertyName || "Property") +
+                    " | Type: " +
+                    (property.type || "Accommodation") +
+                    " | Nights: " +
+                    Number(nights || 1)
+
+            });
+
+        // Keep existing local booking as backup
+        const localBooking = {
+
+            id:
+                booking.booking_number ||
+                "AC-" + Date.now(),
+
+            type:
+                "Accommodation",
+
+            category:
+                property.type,
+
+            customer,
+
+            provider:
+                property.propertyName,
+
+            property,
+
+            nights:
+                Number(nights || 1),
+
+            rooms:
+                Number(rooms || 1),
+
+            guests:
+                Number(guests || 1),
+
+            amount:
+                Number(property.pricePerNight || 0) *
+                Number(nights || 1) *
+                Number(rooms || 1),
+
+            status:
+                booking.status || "pending",
+
+            createdAt:
+                new Date().toISOString()
+
+        };
+
+        const list =
+            safeParse("apeLangaBookings", []);
+
+        list.push(localBooking);
+
+        save(
+            "apeLangaBookings",
+            list
+        );
+
+        save(
+            "apeLangaAccommodationRequest",
+            localBooking
+        );
+
+        showBookingSuccess(
+            "🏠",
+            "Accommodation Booking Sent",
+            localBooking
+        );
+
+    } catch(error) {
+
+        console.error(
+            "[Ape Langa] Accommodation booking error:",
+            error
+        );
+
+        alert(
+            "Accommodation booking එක save කිරීමට නොහැකි විය.\n\n" +
+            (error.message || error)
+        );
+    }
+}
+
+function openAccommodationProviderRegistration(){
+    openModal(`<h2>🏠 Accommodation Provider Registration</h2>
+      ${field("apName","Property Name","text","Hotel / Guest House / Villa")}
+      ${field("apOwner","Owner Name","text","Owner Name")}
+      ${field("apPhone","Phone Number","tel","07XXXXXXXX")}
+      ${field("apAddress","Address","text","Full Address")}
+      ${field("apGPS","GPS Location","text","Latitude, Longitude")}
+      <label>Property Photos</label><input id="apPhotos" type="file" accept="image/*" multiple style="width:100%;margin:8px 0 15px">
+      <label>Property Type</label><select id="apType" class="full-select">${ACCOMMODATION_TYPES.map(v=>`<option>${v[0]}</option>`).join("")}</select>
+      ${field("apRoomType","Room Type","text","Deluxe Room")}
+      ${field("apRooms","Number of Rooms","number","5","1")}
+      ${field("apGuests","Number of Guests","number","4","2")}
+      ${field("apPrice","Price Per Night","number","0")}
+      ${field("apAvailable","Available Rooms","number","0")}
+      ${field("apFacilities","Facilities","text","Wi-Fi, Parking, Breakfast")}
+      ${field("apCheckIn","Check-in Time","time","14:00","14:00")}
+      ${field("apCheckOut","Check-out Time","time","11:00","11:00")}
+      ${field("apDescription","Description","text","Property description")}
+      <button class="request-button" onclick="registerAccommodationProvider()">Register Property</button>
+      <button class="cancel-button" onclick="closeModal()">Cancel</button>`);
+}
+function registerAccommodationProvider(){
+    const a={
+      id:"AC-"+Date.now(),propertyName:document.getElementById("apName")?.value.trim(),
+      ownerName:document.getElementById("apOwner")?.value.trim(),phone:document.getElementById("apPhone")?.value.trim(),
+      address:document.getElementById("apAddress")?.value.trim(),location:document.getElementById("apAddress")?.value.trim(),
+      gps:document.getElementById("apGPS")?.value.trim(),type:document.getElementById("apType")?.value,
+      roomType:document.getElementById("apRoomType")?.value.trim(),numberOfRooms:Number(document.getElementById("apRooms")?.value||0),
+      numberOfGuests:Number(document.getElementById("apGuests")?.value||0),pricePerNight:Number(document.getElementById("apPrice")?.value||0),
+      availableRooms:Number(document.getElementById("apAvailable")?.value||0),facilities:document.getElementById("apFacilities")?.value.trim(),
+      checkInTime:document.getElementById("apCheckIn")?.value,checkOutTime:document.getElementById("apCheckOut")?.value,
+      description:document.getElementById("apDescription")?.value.trim(),rating:0,status:"pending",createdAt:new Date().toISOString()
+    };
+    if(!a.propertyName||!a.ownerName||!a.phone){alert("Property Name, Owner Name සහ Phone Number අවශ්‍යයි.");return;}
+    const list=safeParse("apeLangaAccommodations",[]);list.push(a);save("apeLangaAccommodations",list);
+    openModal(`<div class="success"><div class="success-icon">✅</div><h2>Property Registered</h2>
+      <p>${esc(a.propertyName)} registration එක ලැබුණා.</p><button class="request-button" onclick="closeModal()">Done</button></div>`);
+}
+
+/* ---------------- BOOKING / PAYMENT ---------------- */
+
+function showBookingSuccess(icon,title,b){
+    openModal(`<div class="success"><div class="success-icon">${icon}</div><h2>${esc(title)}</h2>
+      <p>Booking ID: <b>${esc(b.id)}</b></p><p>Amount: <b>${money(b.amount)}</b></p>
+      <p style="color:#666">Booking status: <b>${esc(b.status)}</b></p>
+      <button class="request-button" onclick="closeModal();showMyBookings()">My Bookings</button></div>`);
+}
+function showMyBookings(){
+    const bookings=safeParse("apeLangaBookings",[]);
+    openModal(`<h2>📋 My Bookings</h2>${bookings.length?bookings.map(b=>`
+      <div class="provider-card"><h3>${b.type==="Vehicle Hire"?"🚗":"🏠"} ${esc(b.category)}</h3>
+      <p><b>ID:</b> ${esc(b.id)}</p><p><b>Provider:</b> ${esc(b.provider)}</p><p><b>Status:</b> ${esc(b.status)}</p>
+      <p><b>Amount:</b> ${money(b.amount)}</p><button class="request-button" onclick='openBookingPayment(${JSON.stringify(b)})'>💳 Payment</button></div>`).join(""):"<p>No bookings yet.</p>"}
+      <button class="cancel-button" onclick="closeModal()">Close</button>`);
+}
+function openBookingPayment(booking){
+    const commission=calculateCommission(booking.amount,booking.type==="Vehicle Hire"?"vehicleHire":"accommodation");
+    const net=booking.amount-commission;
+    openModal(`<h2>💳 Booking Payment</h2><div class="bill-box">
+      <p>Booking: <b>${esc(booking.id)}</b></p><p>Service Amount: <b>${money(booking.amount)}</b></p>
+      <p>Ape Langa Commission: <b>${money(commission)}</b></p><p>Provider Amount: <b>${money(net)}</b></p></div>
+      <p style="color:#b26a00">Card details are never stored in localStorage.</p>
+      <button class="request-button" onclick="processDemoPayment('${esc(booking.id)}','${esc(booking.type)}',${booking.amount},${commission})">💳 Pay by Credit / Debit Card</button>
+      <button class="cancel-button" onclick="closeModal()">Cancel</button>`);
+}
+function calculateCommission(amount,module){
+    const rate=APE_LANGA_COMMISSION_RATES[module] ?? 0.10;
+    return Number((Number(amount||0)*rate).toFixed(2));
+}
+function processDemoPayment(id,type,amount,commission){
+    const bookings=safeParse("apeLangaBookings",[]);
+    const b=bookings.find(x=>x.id===id);
+    if(b){b.status="Paid";b.paymentStatus="Paid";b.paidAt=new Date().toISOString();b.commissionAmount=commission;save("apeLangaBookings",bookings);}
+    addTransaction({id,type,amount,commission,status:"Paid"});
+    openModal(`<div class="success"><div class="success-icon">✅</div><h2>Payment Successful</h2>
+      <p>Demo payment completed.</p><p>Total: <b>${money(amount)}</b></p><p>Ape Langa Commission: <b>${money(commission)}</b></p>
+      <p style="color:#666">Production: secure gateway → backend → database → commission settlement.</p>
+      <button class="request-button" onclick="closeModal()">Done</button></div>`);
+}
+
+/* ---------------- FINAL SERVICE BILL / DISPUTE ---------------- */
+
+function openFinalBill(serviceType="Vehicle Service"){
+    openModal(`<h2>🧾 Final Service Bill</h2>
+      <p style="color:#666">Provider service එක complete කළ පසු charges breakdown එක submit කරන්න.</p>
+      ${field("finalBillService","Service Type","text","Vehicle Service",serviceType)}
+      ${field("finalBillDescription","Service Description","text","Work completed")}
+      ${field("billLabour","Labour Charge","number","0","0")}
+      ${field("billParts","Parts Charge","number","0","0")}
+      ${field("billAdditional","Additional Charge","number","0","0")}
+      ${field("billOther","Other Charge","number","0","0")}
+      <div class="bill-box"><b>Total = Labour + Parts + Additional + Other</b><h2 id="liveBillTotal">Rs. 0.00</h2></div>
+      <button class="request-button" onclick="saveProviderBill()">Submit Final Bill</button>
+      <button class="cancel-button" onclick="closeModal()">Cancel</button>`);
+    ["billLabour","billParts","billAdditional","billOther"].forEach(id=>{
+      document.getElementById(id)?.addEventListener("input",updateLiveBillTotal);
+    });
+}
+function updateLiveBillTotal(){
+    const total=["billLabour","billParts","billAdditional","billOther"].reduce((s,id)=>s+Number(document.getElementById(id)?.value||0),0);
+    const el=document.getElementById("liveBillTotal"); if(el) el.innerHTML=money(total);
+}
+function saveProviderBill(){
+    const service=document.getElementById("finalBillService")?.value.trim();
+    const description=document.getElementById("finalBillDescription")?.value.trim();
+    const labour=Number(document.getElementById("billLabour")?.value||0);
+    const parts=Number(document.getElementById("billParts")?.value||0);
+    const additional=Number(document.getElementById("billAdditional")?.value||0);
+    const other=Number(document.getElementById("billOther")?.value||0);
+    const total=labour+parts+additional+other;
+    if(!service||total<=0){alert("කරුණාකර Service සහ අවම වශයෙන් එක් charge එකක් ඇතුළත් කරන්න.");return;}
+    const bill={id:"INV-"+Date.now(),provider:"Current Provider",service,description,labour,parts,additional,other,total,
+      customerConfirmed:false,status:"awaiting_customer_confirmation",createdAt:new Date().toISOString()};
+    save("apeLangaFinalBill",bill);showCustomerBillConfirmation();
+}
+function showCustomerBillConfirmation(){
+    const b=safeParse("apeLangaFinalBill");if(!b)return;
+    openModal(`<h2>🧾 Service Completed – Final Bill</h2>
+      <p><b>Provider:</b> ${esc(b.provider)}</p><p><b>Service:</b> ${esc(b.service)}</p>
+      <p>${esc(b.description)}</p><div class="bill-box">
+      <p>Labour: <b>${money(b.labour)}</b></p><p>Parts: <b>${money(b.parts)}</b></p>
+      <p>Additional: <b>${money(b.additional)}</b></p><p>Other: <b>${money(b.other)}</b></p>
+      <hr><h2>Total Amount: ${money(b.total)}</h2></div>
+      <button class="request-button" onclick="confirmCustomerBill()">✅ Confirm Amount</button>
+      <button class="cancel-button" onclick="rejectCustomerBill()">⚠️ Dispute Amount</button>`);
+}
+function confirmCustomerBill(){
+    const b=safeParse("apeLangaFinalBill");if(!b)return;
+    b.customerConfirmed=true;b.status="confirmed";b.customerConfirmedAt=new Date().toISOString();save("apeLangaFinalBill",b);
+    showPaymentPreview();
+}
+function rejectCustomerBill(){
+    const b=safeParse("apeLangaFinalBill");if(!b)return;
+    b.customerConfirmed=false;b.status="amount_disputed";save("apeLangaFinalBill",b);showDisputeForm();
+}
+function showDisputeForm(){
+    openModal(`<h2>⚠️ Amount Dispute</h2><p>Amount එක පිළිබඳ ගැටලුවට හේතුව ඇතුළත් කරන්න.</p>
+      <textarea id="disputeReason" rows="5" placeholder="Dispute reason..." style="width:100%;padding:13px;border:1px solid #ddd;border-radius:10px"></textarea>
+      <button class="request-button" onclick="submitDispute()">Submit Dispute</button>
+      <button class="cancel-button" onclick="closeModal()">Cancel</button>`);
+}
+function submitDispute(){
+    const reason=document.getElementById("disputeReason")?.value.trim();
+    if(!reason){alert("Dispute reason එක ඇතුළත් කරන්න.");return;}
+    const b=safeParse("apeLangaFinalBill")||{};b.status="amount_disputed";b.disputeReason=reason;b.disputedAt=new Date().toISOString();save("apeLangaFinalBill",b);
+    const disputes=safeParse("apeLangaDisputes",[]);disputes.push({id:"DSP-"+Date.now(),customer:localStorage.getItem("apeLangaCustomerName")||"Customer",
+      provider:b.provider,service:b.service,providerAmount:b.total,customerAmount:"",difference:"",disputeReason:reason,date:new Date().toISOString(),status:"Pending"});save("apeLangaDisputes",disputes);
+    openModal(`<div class="success"><div class="success-icon">⚠️</div><h2>Amount Disputed</h2>
+      <p>ගාස්තුව පිළිබඳ ගැටලුව Admin වෙත යොමු කර ඇත.</p><button class="request-button" onclick="closeModal()">Done</button></div>`);
+}
+function showPaymentPreview(){
+    const b=safeParse("apeLangaFinalBill");if(!b||!b.customerConfirmed)return;
+    const commission=calculateCommission(b.total,"vehicleServices"),providerNet=b.total-commission;
+    b.commissionRate=APE_LANGA_COMMISSION_RATES.vehicleServices;b.commissionAmount=commission;b.providerNetAmount=providerNet;b.status="ready_for_payment";save("apeLangaFinalBill",b);
+    openModal(`<h2>💳 Payment</h2><div class="bill-box">
+      <p>Service Amount: <b>${money(b.total)}</b></p><p>Ape Langa Commission: <b>${money(commission)}</b></p>
+      <p>Provider Net Amount: <b>${money(providerNet)}</b></p></div>
+      <button class="request-button" onclick="startCardPayment()">💳 Pay by Credit / Debit Card</button>
+      <p style="font-size:12px;color:#777">Payment status: Pending → Processing → Paid / Failed / Cancelled / Refunded</p>`);
+}
+function startCardPayment(){
+    const b=safeParse("apeLangaFinalBill");
+    if(!b||b.status!=="ready_for_payment"){alert("Payment සඳහා confirmed bill එකක් අවශ්‍යයි.");return;}
+    openModal(`<div class="success"><div class="success-icon">💳</div><h2>Secure Card Payment</h2>
+      <p>Production version එකේ secure payment gateway එකක් හරහා payment සිදු කළ යුතුයි.</p>
+      <p style="color:#666">Card number, CVV සහ expiry date localStorage එකේ save නොකරන්න.</p>
+      <button class="request-button" onclick="markDemoPaymentSuccess()">Demo Payment Success</button></div>`);
+}
+function markDemoPaymentSuccess(){
+    const b=safeParse("apeLangaFinalBill");if(!b)return;
+    b.status="Paid";b.paymentStatus="Paid";b.paidAt=new Date().toISOString();save("apeLangaFinalBill",b);
+    addTransaction({id:b.id,type:"Vehicle Services",amount:b.total,commission:b.commissionAmount,status:"Paid"});
+    openModal(`<div class="success"><div class="success-icon">✅</div><h2>Payment Successful</h2>
+      <p>Demo payment එක සාර්ථකයි.</p><p><b>Ape Langa Commission: ${money(b.commissionAmount)}</b></p>
+      <button class="request-button" onclick="closeModal()">Done</button></div>`);
+}
+
+/* ---------------- RATING SYSTEM – ALL PROVIDERS ---------------- */
+
+function showRating(provider="Mechanic"){
+    selectedRating=0;selectedRatingProvider=provider;
+    openModal(`<div style="text-align:center"><div style="font-size:55px">⭐</div>
+      <h2>Rate Your Service</h2><p>${esc(provider)}</p><div style="font-size:42px;margin:20px 0">
+      ${[1,2,3,4,5].map(n=>`<span onclick="selectRating(${n})" style="cursor:pointer">⭐</span>`).join("")}</div>
+      <p id="ratingMessage">Star rating එකක් තෝරන්න.</p>
+      <textarea id="ratingReview" rows="3" placeholder="Review (optional)" style="width:100%;padding:12px;border:1px solid #ddd;border-radius:10px"></textarea>
+      <button class="request-button" onclick="submitRating()">Submit Rating</button>
+      <button class="cancel-button" onclick="closeModal()">Cancel</button></div>`);
+}
+function selectRating(rating){
+    selectedRating=rating;const el=document.getElementById("ratingMessage");
+    if(el)el.innerHTML=`ඔබ තෝරාගත්තේ ⭐ ${rating} / 5`;
+}
+function submitRating(){
+    if(selectedRating===0){alert("කරුණාකර Star Rating එකක් තෝරන්න.");return;}
+    const rating={id:"R-"+Date.now(),provider:selectedRatingProvider,customer:localStorage.getItem("apeLangaCustomerName")||"Customer",
+      rating:selectedRating,review:document.getElementById("ratingReview")?.value.trim()||"",createdAt:new Date().toISOString()};
+    const list=safeParse("apeLangaRatings",[]);list.push(rating);save("apeLangaRatings",list);
+    localStorage.setItem("apeLangaRating",selectedRating);loadMechanicRating();
+    openModal(`<div class="success"><div class="success-icon">⭐</div><h2>Thank You!</h2>
+      <p>${esc(selectedRatingProvider)} සඳහා <b>⭐ ${selectedRating}/5</b> Rating එකක් ලබා දී ඇත.</p>
+      <button class="request-button" onclick="closeModal()">Done</button></div>`);
+}
+
+/* ---------------- ADMIN DASHBOARD / FINANCE / DISPUTES ---------------- */
+
+function addTransaction(t){
+    const list=safeParse("apeLangaTransactions",[]);list.push({...t,createdAt:new Date().toISOString()});save("apeLangaTransactions",list);
+}
+function openAdminDashboard(){
+    refreshMasterDashboard();
+    const users=safeParse("apeLangaCustomerName")?1:0;
+    const bookings=safeParse("apeLangaBookings",[]);
+    const transactions=safeParse("apeLangaTransactions",[]);
+    const disputes=safeParse("apeLangaDisputes",[]);
+    const totalPayments=transactions.filter(t=>t.status==="Paid").reduce((s,t)=>s+Number(t.amount||0),0);
+    const commission=transactions.filter(t=>t.status==="Paid").reduce((s,t)=>s+Number(t.commission||0),0);
+    openModal(`<h2>🛠️ Ape Langa Admin Dashboard</h2>
+      <div class="admin-grid">
+        ${adminMetric("Users",users)}${adminMetric("Bookings",bookings.length)}${adminMetric("Total Payments",money(totalPayments))}
+        ${adminMetric("Total Commission",money(commission))}${adminMetric("Pending Payments",transactions.filter(t=>t.status==="Pending").length)}
+        ${adminMetric("Disputes",disputes.filter(d=>d.status==="Pending").length)}
+      </div>
+      <h3>📋 Bookings</h3>${bookings.length?bookings.slice(-10).reverse().map(b=>`<div class="admin-row">
+        <b>${esc(b.id)}</b> • ${esc(b.type)} • ${esc(b.provider)} • ${money(b.amount)} • ${esc(b.status)}
+      </div>`).join(""):"<p>No bookings.</p>"}
+      <h3>⚠️ Disputes</h3>${disputes.length?disputes.slice(-10).reverse().map(d=>`<div class="admin-row">
+        <b>${esc(d.id)}</b> • ${esc(d.customer)} • ${money(d.providerAmount)} • ${esc(d.status)}<br>${esc(d.disputeReason)}
+      </div>`).join(""):"<p>No disputes.</p>"}
+      <h3>⚙️ Commission Settings</h3>
+      <p>Vehicle Services: ${APE_LANGA_COMMISSION_RATES.vehicleServices*100}%</p>
+      <p>Vehicle Hire: ${APE_LANGA_COMMISSION_RATES.vehicleHire*100}%</p>
+      <p>Accommodation: ${APE_LANGA_COMMISSION_RATES.accommodation*100}%</p>
+      <button class="request-button" onclick="closeModal()">Close</button>`);
+}
+function adminMetric(label,value){return `<div class="metric"><small>${esc(label)}</small><strong>${esc(value)}</strong></div>`;}
+function refreshMasterDashboard(){
+    const el=document.getElementById("masterDashboardPreview");if(!el)return;
+    const bookings=safeParse("apeLangaBookings",[]),transactions=safeParse("apeLangaTransactions",[]);
+    const paid=transactions.filter(t=>t.status==="Paid").reduce((s,t)=>s+Number(t.amount||0),0);
+    const commission=transactions.filter(t=>t.status==="Paid").reduce((s,t)=>s+Number(t.commission||0),0);
+    el.innerHTML=`<div class="admin-grid">${adminMetric("Bookings",bookings.length)}${adminMetric("Paid",money(paid))}${adminMetric("Commission",money(commission))}</div>`;
+}
+
+/* ---------------- NAVIGATION / TESTING HELPERS ---------------- */
+
+function openMasterControl(){
+    openModal(`<h2>🧭 Ape Langa Control Center</h2>
+      <button class="location-button" onclick="showMyBookings()">📋 My Bookings</button>
+      <button class="location-button" onclick="openVehicleHire()">🚗 Vehicle Hire</button>
+      <button class="location-button" onclick="openAccommodation()">🏠 Accommodation</button>
+      <button class="location-button" onclick="openAdminDashboard()">🛠️ Admin Dashboard</button>
+      <button class="location-button" onclick="openFinalBill()">🧾 Final Service Bill</button>
+      <button class="location-button" onclick="showRating('Vehicle Provider')">⭐ Vehicle Provider Rating</button>
+      <button class="location-button" onclick="showRating('Accommodation Provider')">⭐ Accommodation Rating</button>
+      <button class="cancel-button" onclick="closeModal()">Close</button>`);
+}
+
+/* Backward-compatible aliases used by the original UI */
+function createHireRequest(vehicleType){ openVehicleSearch(vehicleType); }
+function createAccommodationRequest(type){ openAccommodationSearch(type); }
+
+</script>
+
+<!-- MECHANIC REGISTRATION -->
+
+<div style="
+    max-width:1100px;
+    margin:30px auto;
+    padding:0 15px;
+">
+
+    <div style="
+        background:white;
+        border:1px solid #ddd;
+        border-radius:20px;
+        padding:25px;
+        text-align:center;
+    ">
+
+        <div style="font-size:45px;">
+            🔧
+        </div>
+
+        <h2>
+            ඔබ Mechanic කෙනෙක්ද?
+        </h2>
+
+        <p style="color:#666; margin:10px 0 20px;">
+            Ape Langa සමඟ සම්බන්ධ වී
+            ඔබේ සේවාව පාරිභෝගිකයන්ට ලබාදෙන්න.
+        </p>
+
+        <button
+        onclick="openMechanicRegistration()"
+        style="
+            background:#173b72;
+            color:white;
+            border:none;
+            padding:14px 25px;
+            border-radius:12px;
+            font-size:16px;
+            cursor:pointer;
+        ">
+
+            🔧 Register as a Mechanic
+
+        </button>
+
+    </div>
+
+</div>
+<!-- MECHANIC DASHBOARD -->
+
+<div style="
+    max-width:1100px;
+    margin:30px auto;
+    padding:0 15px;
+">
+
+    <div style="
+        background:white;
+        border-radius:20px;
+        padding:25px;
+        border:1px solid #ddd;
+    ">
+
+        <div style="text-align:center;">
+
+            <div style="font-size:45px;">
+                🔧
+            </div>
+
+            <h2>
+                Mechanic Dashboard
+            </h2>
+
+            <p style="color:#666;">
+                ඔබගේ සේවා තත්ත්වය පාලනය කරන්න.
+            </p>
+
+        </div>
+
+
+        <!-- STATUS -->
+
+        <div style="
+            background:#f5f7fa;
+            padding:20px;
+            border-radius:15px;
+            margin-top:20px;
+            text-align:center;
+        ">
+
+            <h3>
+                Service Status
+            </h3>
+
+            <div id="mechanicStatus"
+            style="
+                font-size:20px;
+                font-weight:bold;
+                color:red;
+                margin:15px;
+            ">
+
+                🔴 Offline
+
+            </div>
+
+
+            <button
+            onclick="setMechanicOnline()"
+            style="
+                background:#168a45;
+                color:white;
+                border:none;
+                padding:13px 20px;
+                border-radius:10px;
+                margin:5px;
+                cursor:pointer;
+            ">
+
+                🟢 Go Online
+
+            </button>
+
+
+            <button
+            onclick="setMechanicOffline()"
+            style="
+                background:#555;
+                color:white;
+                border:none;
+                padding:13px 20px;
+                border-radius:10px;
+                margin:5px;
+                cursor:pointer;
+            ">
+
+                🔴 Go Offline
+
+            </button>
+
+        </div>
+
+
+        <!-- LOCATION -->
+
+        <div style="
+            background:#eef6ff;
+            padding:20px;
+            border-radius:15px;
+            margin-top:20px;
+        ">
+
+            <h3>
+                📍 My Location
+            </h3>
+
+            <p id="mechanicLocation">
+                Location ලබාගෙන නැත.
+            </p>
+
+
+            <button
+            onclick="updateMechanicLocation()"
+            style="
+                width:100%;
+                padding:13px;
+                background:#173b72;
+                color:white;
+                border:none;
+                border-radius:10px;
+                cursor:pointer;
+            ">
+
+                📍 Update My Location
+
+            </button>
+
+        </div>
+
+
+        <!-- REQUESTS -->
+
+        <div style="
+            margin-top:20px;
+        ">
+
+            <h3>
+                📨 Incoming Requests
+            </h3>
+
+
+            <div id="mechanicRequests"
+            style="
+                background:#f5f5f5;
+                padding:20px;
+                border-radius:15px;
+                text-align:center;
+                color:#777;
+            ">
+
+                <div style="
+    background:white;
+    padding:18px;
+    border-radius:15px;
+    border:1px solid #ddd;
+    text-align:left;
+">
+
+    <h3>
+        🚨 New Service Request
+    </h3>
+
+    <p>
+        👤 Customer Request
+    </p>
+
+    <p>
+        🔧 Service: Mechanic
+    </p>
+
+    <p>
+        📍 Customer Location Available
+    </p>
+
+    <p style="color:#777;">
+        ⏱️ Requested just now
+    </p>
+
+
+    <button
+    onclick="acceptRequest()"
+    style="
+        width:100%;
+        padding:13px;
+        background:#168a45;
+        color:white;
+        border:none;
+        border-radius:10px;
+        margin-top:8px;
+        cursor:pointer;
+    ">
+
+        ✅ Accept Request
+
+    </button>
+
+
+    <button
+    onclick="rejectRequest()"
+    style="
+        width:100%;
+        padding:13px;
+        background:#c62828;
+        color:white;
+        border:none;
+        border-radius:10px;
+        margin-top:8px;
+        cursor:pointer;
+    ">
+
+        ❌ Reject Request
+
+    </button>
+
+</div>
+
+            </div>
+
+        </div>
+
+        <!-- RATINGS & REVIEWS -->
+
+<div style="
+    margin-top:20px;
+    background:#f8f9ff;
+    padding:20px;
+    border-radius:15px;
+    border:1px solid #e1e5f0;
+">
+
+    <h3>
+        ⭐ Ratings & Reviews
+    </h3>
+
+    <div style="
+        text-align:center;
+        padding:15px 0;
+    ">
+
+        <div id="mechanicAverageRating"
+            style="
+                font-size:36px;
+                font-weight:bold;
+                color:#173b72;
+            ">
+
+            ⭐ 0.0
+
+        </div>
+
+        <p style="
+            margin:5px 0;
+            color:#666;
+        ">
+
+            Average Rating
+
+        </p>
+
+        <p style="
+            margin:5px 0;
+            color:#777;
+        ">
+
+            Total Ratings:
+            <b id="mechanicTotalRatings">0</b>
+
+        </p>
+
+    </div>
+
+</div>
+
+        <!-- EARNINGS -->
+
+        <div style="
+            margin-top:20px;
+            background:#fff8e8;
+            padding:20px;
+            border-radius:15px;
+        ">
+
+            <h3>
+                💰 Earnings
+            </h3>
+
+            <h2>
+                Rs. 0.00
+            </h2>
+
+            <p style="color:#777;">
+                අද දින ආදායම
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+<!-- CUSTOMER LOGIN -->
+
+<div style="
+    max-width:1100px;
+    margin:30px auto;
+    padding:0 15px;
+">
+
+    <div style="
+        background:white;
+        border:1px solid #ddd;
+        border-radius:20px;
+        padding:25px;
+        text-align:center;
+    ">
+
+        <div style="font-size:45px;">
+            👤
+        </div>
+
+        <h2>
+            Ape Langa Customer
+        </h2>
+
+        <p style="color:#666;">
+            වාහන හදිසි අවස්ථාවකදී
+            ළඟම ඇති සේවාවක් පහසුවෙන් ලබාගන්න.
+        </p>
+
+        <button
+        onclick="openCustomerLogin()"
+        style="
+            background:#173b72;
+            color:white;
+            border:none;
+            padding:14px 30px;
+            border-radius:12px;
+            font-size:16px;
+            cursor:pointer;
+        ">
+
+            👤 Customer Login
+
+        </button>
+
+    </div>
+
+</div>
+<!-- APE LANGA CUSTOMER HOME -->
+
+<div style="
+    max-width:1100px;
+    margin:30px auto;
+    padding:0 15px;
+">
+
+    <div style="
+        background:white;
+        border-radius:22px;
+        padding:25px;
+        border:1px solid #ddd;
+    ">
+
+        <div style="text-align:center;">
+
+            <div style="font-size:50px;">
+                🚗
+            </div>
+
+            <h1 style="margin:5px 0;">
+                APE LANGA
+            </h1>
+
+            <p style="color:#666;">
+                Vehicle Assistance When You Need It
+            </p>
+
+        </div>
+
+
+        <!-- EMERGENCY -->
+
+        <button
+        onclick="openEmergency()"
+        style="
+            width:100%;
+            padding:18px;
+            margin:15px 0;
+            background:#c62828;
+            color:white;
+            border:none;
+            border-radius:15px;
+            font-size:18px;
+            font-weight:bold;
+            cursor:pointer;
+        ">
+
+            🚨 Emergency Help
+
+        </button>
+
+
+        <!-- SERVICES -->
+
+        <div style="
+            display:grid;
+            grid-template-columns:
+            repeat(auto-fit,minmax(140px,1fr));
+            gap:15px;
+        ">
+
+
+            <button
+            onclick="openService('Mechanic')"
+            style="
+                padding:25px 10px;
+                background:#eef6ff;
+                border:1px solid #d5e5ff;
+                border-radius:15px;
+                cursor:pointer;
+            ">
+
+                <div style="font-size:35px;">
+                    🔧
+                </div>
+
+                <b>
+                    Mechanic
+                </b>
+
+            </button>
+
+
+            <button
+            onclick="openService('Towing')"
+            style="
+                padding:25px 10px;
+                background:#eef6ff;
+                border:1px solid #d5e5ff;
+                border-radius:15px;
+                cursor:pointer;
+            ">
+
+                <div style="font-size:35px;">
+                    🚛
+                </div>
+
+                <b>
+                    Towing
+                </b>
+
+            </button>
+
+
+            <button
+            onclick="openService('Battery')"
+            style="
+                padding:25px 10px;
+                background:#eef6ff;
+                border:1px solid #d5e5ff;
+                border-radius:15px;
+                cursor:pointer;
+            ">
+
+                <div style="font-size:35px;">
+                    🔋
+                </div>
+
+                <b>
+                    Battery
+                </b>
+
+            </button>
+
+
+            <button
+            onclick="openService('Tyre')"
+            style="
+                padding:25px 10px;
+                background:#eef6ff;
+                border:1px solid #d5e5ff;
+                border-radius:15px;
+                cursor:pointer;
+            ">
+
+                <div style="font-size:35px;">
+                    🛞
+                </div>
+
+                <b>
+                    Tyre Service
+                </b>
+
+            </button>
+
+        </div>
+
+
+        <!-- NEARBY -->
+
+        <button
+        onclick="findNearbyServices()"
+        style="
+            width:100%;
+            margin-top:18px;
+            padding:16px;
+            background:#173b72;
+            color:white;
+            border:none;
+            border-radius:13px;
+            font-size:16px;
+            cursor:pointer;
+        ">
+
+            📍 Find Nearby Services
+
+        </button>
+
+
+    </div>
+
+</div>
+
+
+<style>
+.category-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:15px 0}
+.category-card{background:#f5f8fc;border:1px solid #dce5f0;border-radius:14px;padding:15px;cursor:pointer;text-align:center;display:flex;flex-direction:column;gap:7px}
+.category-card span{font-size:32px}.category-card:hover{transform:translateY(-2px)}
+.full-select{width:100%;padding:13px;margin:8px 0 15px;border:1px solid #ddd;border-radius:10px;background:white}
+.provider-card,.admin-row{background:white;border:1px solid #ddd;border-radius:15px;padding:16px;margin:10px 0}
+.bill-box{background:#eef6ff;padding:18px;border-radius:12px;margin:12px 0}
+.status-box{padding:12px;border-radius:10px;margin:12px 0}
+.admin-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:15px 0}
+.metric{background:#f5f7fa;border:1px solid #e1e5ee;border-radius:14px;padding:15px;text-align:center}
+.metric small{display:block;color:#666}.metric strong{display:block;font-size:18px;margin-top:5px}
+.master-tools{max-width:1100px;margin:25px auto;padding:0 15px}
+.master-panel{background:white;border:1px solid #ddd;border-radius:20px;padding:20px}
+.tool-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.tool-btn{border:1px solid #d7e2f0;background:#f5f8fc;border-radius:13px;padding:15px;cursor:pointer;font-weight:bold}
+@media(max-width:600px){.category-grid{grid-template-columns:1fr 1fr}.modal-box{padding:18px}}
+</style>
+
+<section class="master-tools">
+  <div class="master-panel">
+    <h2>🧭 Ape Langa Service Center</h2>
+    <p style="color:#666;margin:8px 0 15px">
+      Vehicle Services • Vehicle Hire • Accommodation • Bookings • Payments • Ratings
+    </p>
+    <div class="tool-grid">
+      <button class="tool-btn" onclick="openVehicleHire()">🚗 Vehicle Hire</button>
+      <button class="tool-btn" onclick="openAccommodation()">🏠 Accommodation</button>
+      <button class="tool-btn" onclick="showMyBookings()">📋 My Bookings</button>
+      <button class="tool-btn" onclick="openFinalBill()">🧾 Final Bill</button>
+      <button class="tool-btn" onclick="openAdminDashboard()">🛠️ Admin Dashboard</button>
+      <button class="tool-btn" onclick="openMasterControl()">⚙️ Control Center</button>
+    </div>
+    <div id="masterDashboardPreview" style="margin-top:15px"></div>
+  </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://www.payhere.lk/lib/payhere.js"></script>
+<script src="./config.js"></script>
+<script src="./ape-langa-supabase.js"></script>
+
+<nav class="ape-mobile-nav" aria-label="Quick navigation">
+  <button onclick="window.scrollTo({top:0,behavior:'smooth'})">🏠<br>Home</button>
+  <button onclick="openVehicleHire()">🚗<br>Hire</button>
+  <button onclick="openAccommodation()">🏠<br>Stay</button>
+  <button onclick="openMasterControl()">☰<br>More</button>
+</nav>
+
+<script>
+window.addEventListener("load", function(){
+
+    const params = new URLSearchParams(window.location.search);
+    const openPage = params.get("open");
+
+    if(openPage === "vehicle"){
+
+        setTimeout(function(){
+
+            if(typeof openVehicleHire === "function"){
+                openVehicleHire();
+            }
+
+        }, 500);
+    }
+
+    if(openPage === "accommodation"){
+
+        setTimeout(function(){
+
+            if(typeof openAccommodation === "function"){
+                openAccommodation();
+            }
+
+        }, 500);
+    }
+
+});
+
+if(params.get("open") === "accommodation"){
+
+    setTimeout(function(){
+
+        if(typeof openAccommodation === "function"){
+            openAccommodation();
+        }
+
+    }, 500);
+}
+
+</script>
+
+<div style="text-align:center; padding:20px;">
+    <a href="terms.html" style="margin:0 10px;">
+        📋 Terms & Conditions
+    </a>
+
+    <a href="return-refund.html" style="margin:0 10px;">
+        ↩️ Return & Refund Policy
+    </a>
+
+    <a href="privacy-policy.html" style="margin:0 10px;">
+        🔐 Privacy Policy
+    </a>
+</div>
+
+</body>
+</html>

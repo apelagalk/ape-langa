@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Ape Langa - Customer Dashboard</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./config.js"></script>
+<script src="./ape-langa-supabase.js"></script>
+
+<style>
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    font-family:Arial, sans-serif;
+    background:#f4f7fb;
+    color:#173b72;
+}
+
+.header{
+    background:#173b72;
+    color:white;
+    padding:18px 20px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:15px;
+}
+
+.logo{
+    font-size:22px;
+    font-weight:bold;
+}
+
+.logout{
+    background:white;
+    color:#173b72;
+    border:0;
+    padding:10px 16px;
+    border-radius:10px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.container{
+    width:min(1100px,94%);
+    margin:25px auto 100px;
+}
+
+.welcome{
+    background:white;
+    border-radius:18px;
+    padding:25px;
+    box-shadow:0 4px 18px rgba(0,0,0,.08);
+    margin-bottom:20px;
+}
+
+.welcome h1{
+    margin:0 0 8px;
+}
+
+.email{
+    color:#666;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:18px;
+}
+
+.card{
+    background:white;
+    border-radius:18px;
+    padding:25px;
+    min-height:150px;
+    box-shadow:0 4px 18px rgba(0,0,0,.07);
+}
+
+.card h2{
+    margin-top:0;
+}
+
+.card button{
+    width:100%;
+    border:0;
+    border-radius:12px;
+    padding:13px;
+    background:#173b72;
+    color:white;
+    font-size:16px;
+    cursor:pointer;
+}
+
+.card button:hover{
+    opacity:.9;
+}
+
+.status{
+    margin-top:20px;
+    background:white;
+    border-radius:18px;
+    padding:20px;
+    box-shadow:0 4px 18px rgba(0,0,0,.07);
+}
+
+.loading{
+    text-align:center;
+    padding:50px 20px;
+}
+
+@media(max-width:650px){
+
+    .header{
+        padding:15px;
+    }
+
+    .logo{
+        font-size:18px;
+    }
+
+    .logout{
+        padding:9px 12px;
+        font-size:13px;
+    }
+
+    .container{
+        width:92%;
+        margin-top:18px;
+    }
+
+    .welcome{
+        padding:20px;
+    }
+
+    .welcome h1{
+        font-size:23px;
+    }
+
+    .grid{
+        grid-template-columns:1fr;
+        gap:14px;
+    }
+
+    .card{
+        padding:20px;
+        min-height:auto;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+
+    <div class="logo">
+        🧭 Ape Langa
+    </div>
+
+    <button class="logout" onclick="logoutCustomer()">
+        🚪 Logout
+    </button>
+
+</header>
+
+<main class="container">
+
+    <div id="loading" class="loading">
+        <h2>Loading Customer Dashboard...</h2>
+    </div>
+
+    <section id="dashboard" style="display:none;">
+
+        <div class="welcome">
+
+            <h1>
+                👋 Welcome, <span id="customerName">Customer</span>
+            </h1>
+
+            <div class="email" id="customerEmail"></div>
+
+            <p style="color:#168a45;">
+                ✅ ඔබ සාර්ථකව Login වී ඇත.
+            </p>
+
+        </div>
+
+
+        <div class="grid">
+
+            <div class="card">
+                <h2>📋 My Bookings</h2>
+                <p>ඔබගේ bookings බලන්න.</p>
+
+                <button onclick="showBookings()">
+                    View My Bookings
+                </button>
+            </div>
+
+
+            <div class="card">
+                <h2>🚗 Vehicle Hire</h2>
+                <p>වාහන hire කිරීම සඳහා.</p>
+
+                <button onclick="openVehicleHire()">
+                    Vehicle Hire
+                </button>
+            </div>
+
+
+            <div class="card">
+                <h2>🏠 Accommodation</h2>
+                <p>Accommodation සොයන්න.</p>
+
+                <button onclick="openAccommodation()">
+                    Find Accommodation
+                </button>
+            </div>
+
+
+            <div class="card">
+                <h2>🧾 Final Bill</h2>
+                <p>ඔබගේ final bill බලන්න.</p>
+
+                <button onclick="openFinalBill()">
+                    View Final Bill
+                </button>
+            </div>
+
+        </div>
+
+
+        <div class="status">
+
+            <h2>📊 Account Status</h2>
+
+            <p>
+                Account:
+                <strong style="color:#168a45;">
+                    Active
+                </strong>
+            </p>
+
+            <p id="bookingStatus">
+                Bookings loading...
+            </p>
+            <div id="bookingsList"></div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<script>
+
+async function loadCustomerDashboard(){
+
+    try{
+
+        if(!window.apeLangaSupabase){
+
+            throw new Error(
+                "Supabase connection එක සූදානම් නැහැ."
+            );
+        }
+
+        const user =
+            await window.ApeLanga.auth.currentUser();
+
+        if(!user){
+
+            window.location.href = "index.html";
+            return;
+        }
+
+        document.getElementById("customerEmail").textContent =
+            user.email || "";
+
+        const profile =
+            await window.ApeLanga.auth.profile();
+
+        const name =
+            profile?.full_name ||
+            user.user_metadata?.full_name ||
+            "Customer";
+
+        document.getElementById("customerName").textContent =
+            name;
+
+        document.getElementById("loading").style.display =
+            "none";
+
+        document.getElementById("dashboard").style.display =
+            "block";
+
+        try{
+
+            const bookings =
+                await window.ApeLanga.db.myBookings();
+
+            document.getElementById("bookingStatus").textContent =
+                "📋 ඔබට දැනට " +
+                bookings.length +
+                " booking(s) ඇත.";
+
+        }catch(error){
+
+            console.error(error);
+
+            document.getElementById("bookingStatus").textContent =
+                "📋 Booking information ලබාගැනීමට නොහැකි විය.";
+        }
+
+    }catch(error){
+
+        console.error(
+            "[Ape Langa] Dashboard error:",
+            error
+        );
+
+        alert(
+            "Customer Dashboard එක load කිරීමට නොහැකි විය."
+        );
+
+        window.location.href = "index.html";
+    }
+}
+
+async function showBookings(){
+
+    try {
+
+        const bookings =
+            await window.ApeLanga.db.myBookings();
+
+        const list =
+            document.getElementById("bookingsList");
+
+        const statusBox =
+            document.getElementById("bookingStatus");
+
+        if (!bookings || !bookings.length) {
+
+            if (statusBox) {
+                statusBox.textContent =
+                    "📋 ඔබට දැනට bookings නැහැ.";
+            }
+
+            if (list) {
+                list.innerHTML = "";
+            }
+
+            return;
+        }
+
+        if (statusBox) {
+            statusBox.textContent =
+                "📋 ඔබට දැනට " +
+                bookings.length +
+                " booking(s) ඇත.";
+        }
+
+        if (!list) {
+            return;
+        }
+
+        list.innerHTML = bookings.map(function(booking) {
+
+            const type =
+                booking.booking_type || "Booking";
+
+            const icon =
+                type === "vehicle_hire"
+                    ? "🚗"
+                    : type === "accommodation"
+                        ? "🏠"
+                        : "📋";
+
+            const status =
+                booking.status || "pending";
+
+            const amount =
+                Number(booking.amount || 0)
+                    .toLocaleString("en-LK");
+
+            const date =
+                booking.created_at
+                    ? new Date(
+                        booking.created_at
+                    ).toLocaleString("en-LK")
+                    : "-";
+
+            return `
+                <div class="booking-card">
+
+                    <h3>
+                        ${icon}
+                        ${type === "vehicle_hire"
+                            ? "Vehicle Hire"
+                            : type === "accommodation"
+                                ? "Accommodation"
+                                : type}
+                    </h3>
+
+                    <p>
+                        <b>Booking No:</b>
+                        ${booking.booking_number || "-"}
+                    </p>
+
+                    <p>
+                        <b>Status:</b>
+                        ${status}
+                    </p>
+
+                    <p>
+                        <b>Amount:</b>
+                        Rs. ${amount}
+                    </p>
+
+                    <p>
+                        <b>Created:</b>
+                        ${date}
+                    </p>
+
+                    ${
+                        status.toLowerCase() === "pending"
+                            ? `
+                                <button
+                                    class="request-button"
+                                    onclick="alert('Booking ID: ${booking.id}'); payForBooking('${booking.id}')">
+                                    💳 Pay Now
+                                </button>
+                              `
+                            : ""
+                    }
+
+                </div>
+            `;
+
+        }).join("");
+
+    } catch (error) {
+
+        console.error(
+            "[Ape Langa] My bookings error:",
+            error
+        );
+
+        const statusBox =
+            document.getElementById("bookingStatus");
+
+        if (statusBox) {
+            statusBox.textContent =
+                "📋 Bookings ලබාගැනීමට නොහැකි විය.";
+        }
+    }
+}
+
+
+async function payForBooking(bookingId){
+
+    try {
+
+        if (!bookingId) {
+
+            alert(
+                "Booking ID එක හමු නොවීය."
+            );
+
+            return;
+        }
+
+        if (!window.ApeLanga?.payments?.startPayHere) {
+
+            alert(
+                "PayHere payment system එක තවම සූදානම් නැහැ."
+            );
+
+            return;
+        }
+
+        await window.ApeLanga.payments
+            .startPayHere(bookingId);
+
+    } catch (error) {
+
+        console.error(
+            "[Ape Langa] Payment error:",
+            error
+        );
+
+        alert(
+            "Payment ආරම්භ කිරීමට නොහැකි විය.\n\n" +
+            (error.message || error)
+        );
+    }
+}
+
+
+function openVehicleHire(){
+    window.location.href =
+        "index.html?open=vehicle";
+}
+
+
+function openAccommodation(){
+    window.location.href =
+        "index.html?open=accommodation";
+}
+
+
+loadCustomerDashboard();
+
+</script>
+
+</body>
+</html>

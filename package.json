@@ -1,0 +1,10 @@
+{
+  "name": "ape-langa",
+  "version": "3.0.0",
+  "private": true,
+  "description": "Ape Langa responsive production web application",
+  "scripts": {
+    "dev": "python -m http.server 8080",
+    "preview": "python -m http.server 8080"
+  }
+}

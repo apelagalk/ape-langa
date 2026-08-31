@@ -61,7 +61,37 @@
   };
 
   window.ApeLanga.db = {
-    async createBooking(payload) {
+    async createMechanic(payload) {
+  const user = await currentUser();
+  if (!user) throw new Error("Login required.");
+
+  const profileData = await profile();
+  if (!profileData?.id) {
+    throw new Error("User profile not found.");
+  }
+
+  const { data, error } = await client
+    .from("mechanics")
+    .insert({
+      user_id: profileData.id,
+      name: payload.name || "",
+      phone: payload.phone || null,
+      service_types: payload.service_types || [],
+      experience: Number(payload.experience || 0),
+      online_status: false,
+      latitude: payload.latitude || null,
+      longitude: payload.longitude || null,
+      verification_status: "pending",
+      rating: 0
+    })
+    .select()
+    .single();
+
+  if (error) throw error;
+
+  return data;
+},
+     async createBooking(payload) {
       const user = await currentUser();
       if (!user) throw new Error("Login required.");
       const { data, error } = await client.from("bookings").insert({

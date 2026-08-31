@@ -801,17 +801,96 @@ function openMechanicRegistration(){
       <button class="request-button" onclick="registerMechanic()">Register Now</button>
       <button class="cancel-button" onclick="closeModal()">Cancel</button>`);
 }
-function registerMechanic(){
-    const name=document.getElementById("mechanicName")?.value.trim();
-    const phone=document.getElementById("mechanicPhone")?.value.trim();
-    const service=document.getElementById("mechanicService")?.value;
-    const experience=document.getElementById("mechanicExperience")?.value;
-    if(!name||!phone||!service){ alert("කරුණාකර Name, Phone Number සහ Service Type ඇතුළත් කරන්න."); return; }
-    save("apeLangaMechanicRegistration",{name,phone,service,experience,status:"pending",createdAt:new Date().toISOString()});
-    openModal(`<div class="success"><div class="success-icon">✅</div>
-      <h2>Registration Received</h2><p>ස්තුතියි <b>${esc(name)}</b>.</p>
-      <p>ඔබගේ Mechanic registration request එක ලැබුණා.</p>
-      <button class="request-button" onclick="closeModal()">Done</button></div>`);
+async function registerMechanic(){
+    const name = document.getElementById("mechanicName")?.value.trim();
+    const phone = document.getElementById("mechanicPhone")?.value.trim();
+    const service = document.getElementById("mechanicService")?.value;
+    const experience = Number(
+        document.getElementById("mechanicExperience")?.value || 0
+    );
+
+    if(!name || !phone || !service){
+        alert("කරුණාකර Name, Phone Number සහ Service Type ඇතුළත් කරන්න.");
+        return;
+    }
+
+    try {
+
+        // Save mechanic to Supabase
+        if(window.ApeLanga?.productionConfigured &&
+           window.ApeLanga?.db?.createMechanic){
+
+            const mechanic = await window.ApeLanga.db.createMechanic({
+                name: name,
+                phone: phone,
+                service_types: [service],
+                experience: experience
+            });
+
+            // Keep local backup
+            save("apeLangaMechanicRegistration", {
+                id: mechanic.id,
+                user_id: mechanic.user_id,
+                name,
+                phone,
+                service,
+                experience,
+                status: "pending",
+                createdAt: new Date().toISOString()
+            });
+
+        } else {
+
+            // Prototype fallback
+            save("apeLangaMechanicRegistration", {
+                name,
+                phone,
+                service,
+                experience,
+                status: "pending",
+                createdAt: new Date().toISOString()
+            });
+
+        }
+
+        openModal(`
+            <div class="success">
+                <div class="success-icon">✅</div>
+
+                <h2>Registration Received</h2>
+
+                <p>ස්තුතියි <b>${esc(name)}</b>.</p>
+
+                <p>
+                    ඔබගේ Mechanic registration request එක
+                    සාර්ථකව ලැබුණා.
+                </p>
+
+                <p style="color:#168a45;">
+                    Verification සඳහා ඔබගේ request එක
+                    pending status එකේ තියෙනවා.
+                </p>
+
+                <button
+                    class="request-button"
+                    onclick="closeModal()">
+                    Done
+                </button>
+            </div>
+        `);
+
+    } catch(error) {
+
+        console.error(
+            "[Ape Langa] Mechanic registration error:",
+            error
+        );
+
+        alert(
+            "Registration save කිරීමට නොහැකි වුණා: " +
+            (error?.message || "Unknown error")
+        );
+    }
 }
 function setMechanicOnline(){
     const status=document.getElementById("mechanicStatus");
